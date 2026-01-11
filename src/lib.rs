@@ -1,3 +1,7 @@
+//! A Rust procedural macro collection providing convenient tracing instrumentation macros
+//! for different log levels (trace, debug, info, warn, error). This crate simplifies
+//! the process of adding tracing spans to functions with pre-configured log levels.
+
 mod instrument;
 
 pub(crate) use instrument::*;
@@ -9,12 +13,12 @@ pub(crate) use syn::*;
 
 /// Enables trace-level instrumentation for the decorated function.
 ///
-/// This attribute macro wraps the function with `#[::tracing::instrument(level = "trace")]`,
-/// enabling automatic tracing instrumentation at the trace level.
+/// This attribute macro wraps the function with `#[::tracing::instrument(level = "trace", skip_all)]`,
+/// enabling automatic tracing instrumentation at the trace level with all arguments excluded from span fields.
 ///
 /// # Arguments
 ///
-/// - `attr` - The attribute TokenStream (currently unused).
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The TokenStream representing the function to be instrumented.
 ///
 /// # Returns
@@ -49,7 +53,7 @@ pub fn instrument_trace(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///
 /// # Arguments
 ///
-/// - `attr` - The attribute TokenStream (currently unused).
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The TokenStream representing the function to be instrumented.
 ///
 /// # Returns
@@ -84,7 +88,7 @@ pub fn instrument_debug(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///
 /// # Arguments
 ///
-/// - `attr` - The attribute TokenStream (currently unused).
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The TokenStream representing the function to be instrumented.
 ///
 /// # Returns
@@ -119,7 +123,7 @@ pub fn instrument_info(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///
 /// # Arguments
 ///
-/// - `attr` - The attribute TokenStream (currently unused).
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The TokenStream representing the function to be instrumented.
 ///
 /// # Returns
@@ -154,7 +158,7 @@ pub fn instrument_warn(attr: TokenStream, item: TokenStream) -> TokenStream {
 ///
 /// # Arguments
 ///
-/// - `attr` - The attribute TokenStream (currently unused).
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The TokenStream representing the function to be instrumented.
 ///
 /// # Returns

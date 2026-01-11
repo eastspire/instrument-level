@@ -1,37 +1,23 @@
 use crate::*;
 
-/// Helper function to parse additional instrument parameters from attributes.
-///
-/// # Arguments
-///
-/// - `attr` - The attribute TokenStream containing additional parameters
-///
-/// # Returns
-///
-/// - `TokenStream2` - The parsed additional parameters as a TokenStream
-fn parse_instrument_params(attr: TokenStream) -> TokenStream2 {
-    if attr.is_empty() {
-        return quote! {};
-    }
-    let tokens: TokenStream2 = attr.into();
-    quote! { #tokens }
-}
-
 /// Macro for adding trace-level instrumentation to functions.
 ///
+/// This macro instruments functions with trace-level logging and automatically includes `skip_all`
+/// to exclude all function arguments from the span fields.
+///
 /// # Arguments
 ///
-/// - `_attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The function to instrument
 ///
 /// # Returns
 ///
-/// - `TokenStream` - The instrumented function with trace-level logging
-pub fn instrument_trace_macro(_attr: TokenStream, item: TokenStream) -> TokenStream {
+/// - `TokenStream` - The instrumented function with trace-level logging and skip_all enabled
+pub(crate) fn instrument_trace_macro(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input_fn: ItemFn = parse_macro_input!(item as ItemFn);
-    let params: TokenStream2 = parse_instrument_params(_attr);
+    let params: TokenStream2 = attr.into();
     let expanded: TokenStream2 = quote! {
-        #[::tracing::instrument(level = "trace", #params)]
+        #[::tracing::instrument(level = "trace", skip_all, #params)]
         #input_fn
     };
     TokenStream::from(expanded)
@@ -41,15 +27,15 @@ pub fn instrument_trace_macro(_attr: TokenStream, item: TokenStream) -> TokenStr
 ///
 /// # Arguments
 ///
-/// - `_attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The function to instrument
 ///
 /// # Returns
 ///
 /// - `TokenStream` - The instrumented function with debug-level logging
-pub fn instrument_debug_macro(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub(crate) fn instrument_debug_macro(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input_fn: ItemFn = parse_macro_input!(item as ItemFn);
-    let params: TokenStream2 = parse_instrument_params(_attr);
+    let params: TokenStream2 = attr.into();
     let expanded: TokenStream2 = quote! {
         #[::tracing::instrument(level = "debug", #params)]
         #input_fn
@@ -61,15 +47,15 @@ pub fn instrument_debug_macro(_attr: TokenStream, item: TokenStream) -> TokenStr
 ///
 /// # Arguments
 ///
-/// - `_attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The function to instrument
 ///
 /// # Returns
 ///
 /// - `TokenStream` - The instrumented function with info-level logging
-pub fn instrument_info_macro(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub(crate) fn instrument_info_macro(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input_fn: ItemFn = parse_macro_input!(item as ItemFn);
-    let params: TokenStream2 = parse_instrument_params(_attr);
+    let params: TokenStream2 = attr.into();
     let expanded: TokenStream2 = quote! {
         #[::tracing::instrument(level = "info", #params)]
         #input_fn
@@ -81,15 +67,15 @@ pub fn instrument_info_macro(_attr: TokenStream, item: TokenStream) -> TokenStre
 ///
 /// # Arguments
 ///
-/// - `_attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The function to instrument
 ///
 /// # Returns
 ///
 /// - `TokenStream` - The instrumented function with warn-level logging
-pub fn instrument_warn_macro(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub(crate) fn instrument_warn_macro(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input_fn: ItemFn = parse_macro_input!(item as ItemFn);
-    let params: TokenStream2 = parse_instrument_params(_attr);
+    let params: TokenStream2 = attr.into();
     let expanded: TokenStream2 = quote! {
         #[::tracing::instrument(level = "warn", #params)]
         #input_fn
@@ -101,15 +87,15 @@ pub fn instrument_warn_macro(_attr: TokenStream, item: TokenStream) -> TokenStre
 ///
 /// # Arguments
 ///
-/// - `_attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
+/// - `attr` - Additional tracing instrument parameters (optional): target, name, skip, fields, etc.
 /// - `item` - The function to instrument
 ///
 /// # Returns
 ///
 /// - `TokenStream` - The instrumented function with error-level logging
-pub fn instrument_error_macro(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub(crate) fn instrument_error_macro(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input_fn: ItemFn = parse_macro_input!(item as ItemFn);
-    let params: TokenStream2 = parse_instrument_params(_attr);
+    let params: TokenStream2 = attr.into();
     let expanded: TokenStream2 = quote! {
         #[::tracing::instrument(level = "error", #params)]
         #input_fn
